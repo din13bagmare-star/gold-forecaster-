@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institutional &amp; Macro Hybrid Gold Forecasting Terminal</title>
+<style>
+  :root {
+    --bg: #070c17;
+    --panel: #111b2e;
+    --panel-alt: #0b1220;
+    --border: #253652;
+    --border-soft: #1b2840;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --gold: #f59e0b;
+    --gold-bright: #fbbf24;
+    --gold-dim: rgba(245, 158, 11, 0.14);
+    --blue: #38bdf8;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #a78bfa;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  .app-shell {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 14px;
+  }
+  .top-banner {
+    background: linear-gradient(135deg, #16233b 0%, #0b1220 100%);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .brand-block h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--gold-bright);
+  }
+  .brand-block p {
+    margin: 3px 0 0 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .pill-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel-alt);
+    color: var(--blue);
+  }
+  .pill.gold {
+    color: var(--gold-bright);
+    border-color: rgba(245, 158, 11, 0.4);
+    background: var(--gold-dim);
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .card-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gold-bright);
+  }
+  .key-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 680px) {
+    .key-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  input[type="password"], input[type="text"], input[type="date"], select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #33486b;
+    background: var(--panel-alt);
+    color: var(--text);
+    font-size: 0.92rem;
+    outline: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--gold);
+  }
+  button {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: #070c17;
+  }
+  .btn-slate {
+    background: #273754;
+    color: var(--text);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 680px) {
+    .grid-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  @media (max-width: 720px) {
+    .grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .metric-box {
+    background: var(--panel-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .metric-box.inst {
+    border-top: 2px solid var(--purple);
+  }
+  .metric-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .metric-box.inst .metric-label {
+    color: var(--purple);
+  }
+  .metric-val {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--gold-bright);
+  }
+  .metric-box.inst .metric-val {
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .metric-sub {
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .news-box {
+    background: var(--panel-alt);
+    border: 1px solid var(--border-soft);
+    border-left: 4px solid var(--blue);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .news-box.national {
+    border-left-color: var(--gold);
+  }
+  .news-head {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 3px;
+  }
+  .news-box.national .news-head {
+    color: var(--gold-bright);
+  }
+  .news-body {
+    font-size: 0.86rem;
+    color: var(--text);
+  }
+  .forecast-split {
+    display: grid;
+    grid-template-columns: 1fr 1.45fr;
+    gap: 12px;
+    align-items: stretch;
+  }
+  @media (max-width: 660px) {
+    .forecast-split {
+      grid-template-columns: 1fr;
+    }
+  }
+  .control-box {
+    background: var(--panel-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .field-label {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .price-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .price-panel {
+    background: var(--panel-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 11px 14px;
+  }
+  .price-panel.highlight {
+    border: 1px solid var(--gold);
+    background: rgba(245, 158, 11, 0.08);
+  }
+  .price-panel-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .price-panel-main {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-top: 2px;
+  }
+  .price-panel.highlight .price-panel-main {
+    font-size: 1.42rem;
+    color: var(--gold-bright);
+  }
+  .price-panel-sub {
+    font-size: 0.76rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .mc-card {
+    background: var(--panel-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 10px;
+    display: none;
+  }
+  .mc-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .mc-summary {
+    font-size: 0.85rem;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .scenario-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 7px;
+    font-size: 0.83rem;
+  }
+  .diag-panel {
+    background: var(--panel-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 10px;
+  }
+  .diag-log {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    max-height: 150px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    margin-top: 6px;
+  }
+  .status-bar {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--blue);
+    min-height: 18px;
+  }
+  .error-banner {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.14);
+    border: 1px solid var(--red);
+    color: #fecaca;
+    font-size: 0.82rem;
+    display: none;
+    white-space: pre-wrap;
+  }
+  .pos {
+    color: var(--green);
+  }
+  .neg {
+    color: var(--red);
+  }
+  .muted-note {
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="top-banner">
+    <div class="brand-block">
+      <h1>Hybrid Macro &amp; Institutional Gold Forecasting Terminal</h1>
+      <p>Runtime Web Grounding + US Real Yields + COT/ETF Positioning + MCX-COMEX Parity + Correlated Monte Carlo</p>
+    </div>
+    <div class="pill-group">
+      <span class="pill gold">24K INR / 10g</span>
+      <span class="pill">Live Grounded Search</span>
+      <span class="pill">Correlated Monte Carlo</span>
+    </div>
+  </header>
+  <section class="card">
+    <div class="card-header">
+      <span class="card-title">Browser Session &amp; API Key Vault (Local Storage Only)</span>
+      <span class="muted-note" style="margin:0;">Never hardcoded in repository source</span>
+    </div>
+    <div class="key-row">
+      <input type="password" id="apiKeyInput" placeholder="Paste your restricted Gemini API key here...">
+      <button type="button" class="btn-slate" id="saveKeyBtn" onclick="handleSaveKey()">Save Key</button>
+      <button type="button" class="btn-outline" id="toggleMaskBtn" onclick="handleToggleMask()">Show</button>
+      <button type="button" class="btn-outline" id="clearKeyBtn" onclick="handleClearKey()">Clear</button>
+    </div>
+    <div class="muted-note">Restrict your Gemini API key in Google AI Studio / Cloud Console to your GitHub Pages domain (e.g. <code>[https://din13bagmare-star.github.io/](https://din13bagmare-star.github.io/)*</code>) and Gemini API only.</div>
+  </section>
+  <section class="card">
+    <div class="card-header">
+      <span class="card-title">Core Macro &amp; Geopolitical Telemetry</span>
+      <span class="muted-note" id="telemetryStamp" style="margin:0;">Awaiting runtime fetch</span>
+    </div>
+    <div class="grid-3">
+      <div class="metric-box"><div class="metric-label">1. Current International Rate</div><div class="metric-val" id="box1Val">--</div><div class="metric-sub" id="box1Sub">Spot XAU / USD per troy oz</div></div>
+      <div class="metric-box"><div class="metric-label">2. Fed Lending Rate</div><div class="metric-val" id="box2Val">--</div><div class="metric-sub" id="box2Sub">US Fed Funds &amp; 10Y Nominal Yield</div></div>
+      <div class="metric-box"><div class="metric-label">3. Other Indicators</div><div class="metric-val" id="box3Val">--</div><div class="metric-sub" id="box3Sub">USD/INR, DXY, Brent Crude &amp; FII</div></div>
+    </div>
+  </section>
+  <section class="card">
+    <div class="card-header">
+      <span class="card-title">Institutional Smart-Money &amp; Parity Signals</span>
+      <span class="muted-note" style="margin:0;">Real Yields, Flows, Basis &amp; FX Attribution</span>
+    </div>
+    <div class="grid-4">
+      <div class="metric-box inst"><div class="metric-label">US 10Y Real Yield</div><div class="metric-val" id="instRealYield">--</div><div class="metric-sub" id="instRealYieldSub">TIPS / Inflation-Adjusted</div></div>
+      <div class="metric-box inst"><div class="metric-label">COT &amp; ETF Flows</div><div class="metric-val" id="instFlows">--</div><div class="metric-sub" id="instFlowsSub">CFTC Managed Money &amp; ETFs</div></div>
+      <div class="metric-box inst"><div class="metric-label">MCX-COMEX Basis</div><div class="metric-val" id="instBasis">--</div><div class="metric-sub" id="instBasisSub">Duty + 3% GST + Local Spread</div></div>
+      <div class="metric-box inst"><div class="metric-label">USD/INR Cushion</div><div class="metric-val" id="instCushion">--</div><div class="metric-sub" id="instCushionSub">FX vs. Global Gold Split</div></div>
+    </div>
+  </section>
+  <section class="card">
+    <div class="card-header"><span class="card-title">Geopolitical &amp; Domestic Event Impact Analysis</span><span class="muted-note" style="margin:0;">Global Shocks &amp; Indian Triggers</span></div>
+    <div class="news-box"><div class="news-head">Global News &amp; Geopolitical Events Effect</div><div class="news-body" id="globalEffectText">Choose a target prediction date below and tap Run Hybrid Forecast to fetch live global headlines, geopolitical risks, central bank posture, and market pricing.</div></div>
+    <div class="news-box national"><div class="news-head">National News &amp; India Domestic Effect</div><div class="news-body" id="nationalEffectText">USD/INR currency dynamics, RBI forex/liquidity actions, FII inflows/outflows, customs duty/GST rules, and Indian seasonal/wedding demand will appear here.</div></div>
+  </section>
+  <section class="card">
+    <div class="card-header"><span class="card-title">Target Date Forecast &amp; INR Parity Output</span><span class="muted-note" id="horizonBadge" style="margin:0;">Horizon: 1 to 90 days</span></div>
+    <div class="forecast-split">
+      <div class="control-box">
+        <div><label class="field-label" for="targetDateInput">Target Date (INR 24K / 10g)</label><input type="date" id="targetDateInput" value="2026-12-12"></div>
+        <div><label class="field-label" for="simPathsSelect">Monte Carlo Paths</label><select id="simPathsSelect"><option value="2000" selected>2,000 Correlated Paths</option><option value="5000">5,000 Correlated Paths</option><option value="1000">1,000 Correlated Paths</option></select></div>
+        <button type="button" class="btn-gold" id="runForecastBtn" onclick="executeForecastPipeline()">Run Hybrid Forecast</button>
+      </div>
+      <div class="price-column">
+        <div class="price-panel"><div class="price-panel-title">Int. Prices (Projected Spot on Target Date)</div><div class="price-panel-main" id="projIntPrice">--</div><div class="price-panel-sub" id="projIntSub">Global XAU / USD median projection</div></div>
+        <div class="price-panel highlight"><div class="price-panel-title">Local Prices (India 24K per 10g)</div><div class="price-panel-main" id="projLocalPrice">--</div><div class="price-panel-sub" id="projLocalSub">Today: -- | Expected Change: --</div></div>
+      </div>
+    </div>
+    <div class="mc-card" id="mcResultCard">
+      <div class="mc-title">Monte Carlo Distribution &amp; Multi-Scenario Tree</div>
+      <div class="mc-summary" id="mcBandSummary">--</div>
+      <div id="scenarioTreeContainer"></div>
+      <div class="muted-note">Disclaimer: Probabilistic macro &amp; quantitative scenario modeling is for analytical reference only and does not constitute financial or investment advice.</div>
+    </div>
+    <div class="status-bar" id="statusLine"></div>
+    <div class="error-banner" id="errorBanner"></div>
+    <div class="diag-panel">
+      <div class="card-header" style="margin-bottom:4px;padding-bottom:4px;"><span class="card-title" style="font-size:0.7rem;color:var(--muted);">Runtime Execution &amp; Model Discovery Log</span><button type="button" class="btn-outline" style="padding:4px 8px;font-size:0.72rem;" onclick="clearDiagnostics()">Clear Log</button></div>
+      <div class="diag-log" id="diagLog">Ready. Save your Gemini API key above and select a target date.</div>
+    </div>
+  </section>
+</div>
+<script>
+(function () {
+  "use strict";
+  const STORAGE_KEY = "gold_terminal_gemini_api_key_v1";
+  const TROY_OZ_TO_GRAMS = 31.1034768;
+  const DEFAULT_GST_RATE = 0.03;
+  const PREFERRED_SEARCH_MODELS = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-4-hydrogen", "gemini-4-argon"];
+  function logDiag(msg) {
+    const el = document.getElementById("diagLog");
+    if (!el) return;
+    const stamp = new Date().toISOString().slice(11, 19);
+    el.textContent += (el.textContent ? "\n" : "") + "[" + stamp + "] " + msg;
+    el.scrollTop = el.scrollHeight;
+  }
+  function clearDiagnostics() { const el = document.getElementById("diagLog"); if (el) el.textContent = ""; }
+  function setStatus(msg) { const el = document.getElementById("statusLine"); if (el) el.textContent = msg || ""; }
+  function showError(msg) { const el = document.getElementById("errorBanner"); if (!el) return; el.style.display = "block"; el.textContent = msg || "Unknown error"; }
+  function hideError() { const el = document.getElementById("errorBanner"); if (!el) return; el.style.display = "none"; el.textContent = ""; }
+  function formatINR(val) { const n = Number(val); return Number.isFinite(n) ? "Rs." + Math.round(n).toLocaleString("en-IN") : "--"; }
+  function formatUSD(val, decimals) { const n = Number(val); if (!Number.isFinite(n)) return "--"; const d = typeof decimals === "number" ? decimals : 2; return "$" + n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function isExcludedModelId(modelId) {
+    const id = String(modelId || "").toLowerCase();
+    if (!id) return true;
+    return ["tts", "audio", "image", "imagen", "veo", "live", "transcribe", "embedding", "aqa"].some(function (tok) { return id.indexOf(tok) !== -1; });
+  }
+  function isCandidateSearchModel(modelId) {
+    const id = String(modelId || "").toLowerCase();
+    if (isExcludedModelId(id)) return false;
+    return id.indexOf("gemini-3.8") !== -1 || id.indexOf("gemini-3.6") !== -1 || id.indexOf("gemini-3.5") !== -1 || id.indexOf("gemini-4") !== -1 || id.indexOf("gemini-3") !== -1;
+  }
+  function parseLooseJson(text) {
+    const trimmed = String(text || "").replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+    try { return JSON.parse(trimmed); } catch (_) {
+      const start = trimmed.indexOf("{"), end = trimmed.lastIndexOf("}");
+      if (start !== -1 && end !== -1 && end > start) return JSON.parse(trimmed.slice(start, end + 1));
+      throw new Error("Model output was not valid JSON:\n" + trimmed.slice(0, 600));
+    }
+  }
+
+  function classifyMacroRegime(data) {
+    const spotUsd = Number(data && data.spot_usd_oz);
+    const spotFx = Number(data && data.spot_usd_inr);
+    const corr = Number(data && data.gold_fx_corr);
+    const regimeNotes = [];
+    if (Number.isFinite(spotUsd) && spotUsd > 0) {
+      regimeNotes.push("Spot Bullion Anchor: $" + spotUsd.toFixed(2) + "/oz");
+    }
+    if (Number.isFinite(spotFx) && spotFx > 0) {
+      regimeNotes.push("USD/INR FX Anchor: Rs." + spotFx.toFixed(2));
+    }
+    if (Number.isFinite(corr)) {
+      regimeNotes.push("Gold-FX Corr: " + corr.toFixed(2));
+    }
+    return regimeNotes.join(" | ");
+  }
+
+  function normalizeScenarioWeights(rawScenarios, fallbackUsd, fallbackFx) {
+    const list = Array.isArray(rawScenarios) ? rawScenarios : [];
+    const cleaned = [];
+    let totalProb = 0;
+
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i] || {};
+      const prob = Math.max(0, Number(item.prob_pct) || 0);
+      const tUsd = Number(item.target_usd_oz);
+      const tFx = Number(item.target_usd_inr);
+      cleaned.push({
+        name: String(item.name || "Scenario " + (i + 1)),
+        prob_pct: prob,
+        target_usd_oz: Number.isFinite(tUsd) && tUsd > 0 ? tUsd : fallbackUsd,
+        target_usd_inr: Number.isFinite(tFx) && tFx > 0 ? tFx : fallbackFx,
+        drivers: String(item.drivers || "")
+      });
+      totalProb += prob;
+    }
+
+    if (cleaned.length === 0) {
+      return [
+        {
+          name: "Base Case",
+          prob_pct: 100,
+          target_usd_oz: fallbackUsd,
+          target_usd_inr: fallbackFx,
+          drivers: "Baseline macro & currency trajectory"
+        }
+      ];
+    }
+
+    if (totalProb <= 0) {
+      const equalProb = Math.round(100 / cleaned.length);
+      return cleaned.map(function (sc, idx) {
+        return {
+          name: sc.name,
+          prob_pct: idx === cleaned.length - 1 ? Math.max(0, 100 - equalProb * (cleaned.length - 1)) : equalProb,
+          target_usd_oz: sc.target_usd_oz,
+          target_usd_inr: sc.target_usd_inr,
+          drivers: sc.drivers
+        };
+      });
+    }
+
+    return cleaned;
+  }
+
+  function createSeededRng(seedInt) {
+    let state = (Number(seedInt) >>> 0) || 1337;
+    return function () {
+      state = (state + 0x6D2B79F5) >>> 0;
+      let t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function sampleStandardNormal(rng) {
+    let u1 = 0, u2 = 0;
+    while (u1 <= 1e-12) u1 = rng();
+    while (u2 <= 1e-12) u2 = rng();
+    return Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+  }
+  function computeLandedIndia24KPer10g(usdPerOz, usdInrRate, dutyDecimal, gstDecimal, basisInr) {
+    const g = Number(usdPerOz), fx = Number(usdInrRate);
+    const duty = Number.isFinite(Number(dutyDecimal)) ? Number(dutyDecimal) : 0.06;
+    const gst = Number.isFinite(Number(gstDecimal)) ? Number(gstDecimal) : DEFAULT_GST_RATE;
+    const basis = Number.isFinite(Number(basisInr)) ? Number(basisInr) : 1000;
+    if (!Number.isFinite(g) || !Number.isFinite(fx) || g <= 0 || fx <= 0) return NaN;
+    return ((g / TROY_OZ_TO_GRAMS) * 10.0 * fx) * (1.0 + duty) * (1.0 + gst) + basis;
+  }
+  function runCorrelatedMonteCarloEngine(cfg) {
+    const spotUsd = Number(cfg.spotUsd), spotFx = Number(cfg.spotFx), todayInr = Number(cfg.todayInr);
+    const horizonDays = Math.max(1, Math.min(90, Number(cfg.horizonDays) || 14));
+    const dutyRate = Number.isFinite(Number(cfg.dutyRate)) ? Number(cfg.dutyRate) : 0.06;
+    const gstRate = Number.isFinite(Number(cfg.gstRate)) ? Number(cfg.gstRate) : DEFAULT_GST_RATE;
+    const basisInr = Number.isFinite(Number(cfg.basisInr)) ? Number(cfg.basisInr) : 1000;
+    const pathCount = Math.max(500, Math.min(10000, Number(cfg.pathCount) || 2000));
+    const scenarios = normalizeScenarioWeights(cfg.scenarios, spotUsd, spotFx);
+    let weightSum = 0, weightedUsd = 0, weightedFx = 0;
+    for (let i = 0; i < scenarios.length; i++) {
+      const sc = scenarios[i] || {}, prob = Math.max(0, Number(sc.prob_pct) || 0);
+      const tUsd = Number(sc.target_usd_oz), tFx = Number(sc.target_usd_inr);
+      if (prob > 0 && Number.isFinite(tUsd) && tUsd > 0 && Number.isFinite(tFx) && tFx > 0) { weightSum += prob; weightedUsd += prob * tUsd; weightedFx += prob * tFx; }
+    }
+    const targetUsdMean = weightSum > 0 ? weightedUsd / weightSum : spotUsd;
+    const targetFxMean = weightSum > 0 ? weightedFx / weightSum : spotFx;
+    const dtYears = horizonDays / 365.0;
+    const driftGold = Math.log(Math.max(1, targetUsdMean) / Math.max(1, spotUsd)) / dtYears;
+    const driftFx = Math.log(Math.max(1, targetFxMean) / Math.max(1, spotFx)) / dtYears;
+    const volGold = Math.max(0.08, Math.min(0.45, Number(cfg.annualGoldVol) || 0.16));
+    const volFx = Math.max(0.02, Math.min(0.18, Number(cfg.annualFxVol) || 0.055));
+    const rho = Math.max(-0.85, Math.min(0.85, Number(cfg.goldFxCorr) || -0.15));
+    const rng = createSeededRng(Math.round(spotUsd * 100) + Math.round(spotFx * 100) + horizonDays * 97);
+    const simUsdArr = new Array(pathCount), simInrArr = new Array(pathCount);
+    for (let p = 0; p < pathCount; p++) {
+      const z1 = sampleStandardNormal(rng), z2Indep = sampleStandardNormal(rng);
+      const z2 = rho * z1 + Math.sqrt(Math.max(0, 1.0 - rho * rho)) * z2Indep;
+      const sUsd = spotUsd * Math.exp((driftGold - 0.5 * volGold * volGold) * dtYears + volGold * Math.sqrt(dtYears) * z1);
+      const sFx = spotFx * Math.exp((driftFx - 0.5 * volFx * volFx) * dtYears + volFx * Math.sqrt(dtYears) * z2);
+      simUsdArr[p] = sUsd; simInrArr[p] = computeLandedIndia24KPer10g(sUsd, sFx, dutyRate, gstRate, basisInr);
+    }
+    simUsdArr.sort(function (a, b) { return a - b; }); simInrArr.sort(function (a, b) { return a - b; });
+    const idxP10 = Math.min(pathCount - 1, Math.floor(pathCount * 0.10));
+    const idxP50 = Math.min(pathCount - 1, Math.floor(pathCount * 0.50));
+    const idxP90 = Math.min(pathCount - 1, Math.floor(pathCount * 0.90));
+    const p50Usd = simUsdArr[idxP50], p10Inr = simInrArr[idxP10], p50Inr = simInrArr[idxP50], p90Inr = simInrArr[idxP90];
+    const goldOnlyInr = computeLandedIndia24KPer10g(p50Usd, spotFx, dutyRate, gstRate, basisInr);
+    return {
+      expectedUsdOz: p50Usd, expectedInr10g: p50Inr, p10Inr10g: p10Inr, p90Inr10g: p90Inr,
+      goldImpactInr: Number.isFinite(goldOnlyInr) && Number.isFinite(todayInr) ? goldOnlyInr - todayInr : 0,
+      fxImpactInr: Number.isFinite(p50Inr) && Number.isFinite(goldOnlyInr) ? p50Inr - goldOnlyInr : 0,
+      pathCount: pathCount
+    };
+  }
+  async function discoverModels(apiKey) {
+    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models?key=" + encodeURIComponent(apiKey);
+    const resp = await fetch(endpoint);
+    if (!resp.ok) throw new Error("ListModels failed (" + resp.status + "): " + (await resp.text()));
+    const payload = await resp.json(), models = Array.isArray(payload.models) ? payload.models : [], discovered = [];
+    for (let i = 0; i < models.length; i++) {
+      const m = models[i] || {}, methods = Array.isArray(m.supportedGenerationMethods) ? m.supportedGenerationMethods : [];
+      if (methods.indexOf("generateContent") === -1) continue;
+      const cleanId = String(m.name || "").replace(/^models\//, "");
+      if (isCandidateSearchModel(cleanId) && discovered.indexOf(cleanId) === -1) discovered.push(cleanId);
+    }
+    return discovered;
+  }
+  async function invokeGroundedModel(apiKey, modelId, promptText) {
+    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(modelId) + ":generateContent?key=" + encodeURIComponent(apiKey);
+    const resp = await fetch(endpoint, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: promptText }] }], tools: [{ google_search: {} }], generationConfig: { temperature: 0.15 } })
+    });
+    const rawText = await resp.text();
+    if (!resp.ok) { const err = new Error("Model " + modelId + " HTTP " + resp.status + ": " + rawText); err.status = resp.status; throw err; }
+    const data = JSON.parse(rawText), candidates = Array.isArray(data.candidates) ? data.candidates : [];
+    const parts = candidates[0] && candidates[0].content && Array.isArray(candidates[0].content.parts) ? candidates[0].content.parts : [];
+    const nonThoughtText = parts.filter(function (p) { return !p.thought && typeof p.text === "string"; }).map(function (p) { return p.text; }).join("").trim();
+    const fallbackText = parts.map(function (p) { return typeof p.text === "string" ? p.text : ""; }).join("").trim();
+    const combined = nonThoughtText || fallbackText;
+    if (!combined) throw new Error("Model " + modelId + " returned empty text parts.");
+    return parseLooseJson(combined);
+  }
+  function buildMarketPrompt(todayStr, istTimestamp, targetDateStr, horizonDays) {
+    return [
+      "Current date: " + todayStr + " (IST timestamp: " + istTimestamp + "). Target forecast date: " + targetDateStr + " (" + horizonDays + " days ahead).",
+      "Use Google Search right now to fetch live real-time global & Indian market data and institutional signals:",
+      "1) Live spot XAU/USD gold price per troy oz and live USD/INR exchange rate.",
+      "2) Current US Federal Reserve lending rate (target range), FOMC rate expectations/odds, US 10-year nominal Treasury yield, and US 10-year TIPS real yield.",
+      "3) US Dollar Index (DXY), Brent crude oil ($/bbl), and FII/FPI equity & debt flows in India.",
+      "4) Institutional smart-money indicators: CFTC COT Managed Money positioning, SPDR GLD & Indian Gold ETF inflows/outflows, and central bank buying.",
+      "5) Current Indian 24K gold price (INR per 10g), current Indian customs import duty rate as a decimal (e.g. 0.06 or 0.15), and MCX-COMEX local basis/spread in INR per 10g.",
+      "6) Active global geopolitical events/conflicts/sanctions/risks affecting gold between today and " + targetDateStr + ".",
+      "7) Indian national news/events (RBI MPC/forex actions, FII trends, wedding/festive season, customs duty/Budget context) affecting gold up to " + targetDateStr + ".",
+      "8) Three scenarios (Base Case, Bullish/Dovish/Geopolitical Surge, Bearish/Hawkish/Strong-USD Case) summing to 100% with target_usd_oz and target_usd_inr on " + targetDateStr + ".",
+      "Respond ONLY with JSON: {\"spot_usd_oz\": number, \"spot_usd_inr\": number, \"today_india_24k_10g\": number, \"fed_rate_text\": \"string\", \"fed_sub_text\": \"string\", \"other_ind_main\": \"string\", \"other_ind_sub\": \"string\", \"us_10y_real_yield\": \"string\", \"real_yield_signal\": \"string\", \"cot_etf_summary\": \"string\", \"cot_etf_sub\": \"string\", \"mcx_comex_basis_text\": \"string\", \"mcx_comex_basis_inr\": number, \"india_duty_decimal\": number, \"annual_gold_vol\": number, \"annual_fx_vol\": number, \"gold_fx_corr\": number, \"global_news_effect\": \"string\", \"national_news_effect\": \"string\", \"scenarios\": [{\"name\": \"string\", \"prob_pct\": number, \"target_usd_oz\": number, \"target_usd_inr\": number, \"drivers\": \"string\"}]}"
+    ].join("\n");
+  }
+  function renderDashboard(data, mc, meta) {
+    const spotUsd = Number(data.spot_usd_oz), spotFx = Number(data.spot_usd_inr);
+    document.getElementById("box1Val").textContent = formatUSD(spotUsd, 2) + " / oz";
+    document.getElementById("box1Sub").textContent = "Live XAU/USD (" + meta.todayStr + ")";
+    document.getElementById("box2Val").textContent = data.fed_rate_text || "--";
+    document.getElementById("box2Sub").textContent = data.fed_sub_text || "US Fed Funds & 10Y Nominal";
+    document.getElementById("box3Val").textContent = data.other_ind_main || ("USD/INR Rs." + (Number.isFinite(spotFx) ? spotFx.toFixed(2) : "--"));
+    document.getElementById("box3Sub").textContent = data.other_ind_sub || "DXY, Brent Crude & FII Flows";
+    document.getElementById("instRealYield").textContent = data.us_10y_real_yield || "--";
+    document.getElementById("instRealYieldSub").textContent = data.real_yield_signal || "TIPS Real Yield";
+    document.getElementById("instFlows").textContent = data.cot_etf_summary || "--";
+    document.getElementById("instFlowsSub").textContent = data.cot_etf_sub || "COT & ETF Tonnage";
+    document.getElementById("instBasis").textContent = data.mcx_comex_basis_text || formatINR(meta.basisInr);
+    document.getElementById("instBasisSub").textContent = "Duty " + (meta.dutyRate * 100).toFixed(1) + "% + 3% GST";
+    const fxSign = mc.fxImpactInr >= 0 ? "+" : "-", goldSign = mc.goldImpactInr >= 0 ? "+" : "-";
+    document.getElementById("instCushion").textContent = fxSign + formatINR(Math.abs(mc.fxImpactInr));
+    document.getElementById("instCushionSub").textContent = "Bullion: " + goldSign + formatINR(Math.abs(mc.goldImpactInr));
+    document.getElementById("globalEffectText").textContent = data.global_news_effect || "--";
+    document.getElementById("nationalEffectText").textContent = data.national_news_effect || "--";
+    document.getElementById("projIntPrice").textContent = formatUSD(mc.expectedUsdOz, 0) + " / oz";
+    document.getElementById("projIntSub").textContent = "Simulated Median on " + meta.targetDateStr + " (" + meta.horizonDays + "d)";
+    const deltaInr = mc.expectedInr10g - meta.todayInr, deltaPct = meta.todayInr ? (deltaInr / meta.todayInr) * 100.0 : 0;
+    const dSign = deltaInr >= 0 ? "+" : "-", pSign = deltaPct >= 0 ? "+" : "";
+    document.getElementById("projLocalPrice").textContent = formatINR(mc.expectedInr10g) + " / 10g";
+    document.getElementById("projLocalSub").innerHTML = "Today: " + formatINR(meta.todayInr) + " | Expected Shift: <strong class='" + (deltaInr >= 0 ? "pos" : "neg") + "'>" + dSign + formatINR(Math.abs(deltaInr)) + " (" + pSign + deltaPct.toFixed(2) + "%)</strong>";
+    document.getElementById("mcBandSummary").innerHTML = "<strong>" + mc.pathCount.toLocaleString("en-US") + "-Path 80% Confidence Band (" + meta.targetDateStr + "):</strong> " + formatINR(mc.p10Inr10g) + " (P10 Low) &nbsp;&bull;&nbsp; <strong>" + formatINR(mc.expectedInr10g) + " (P50 Median)</strong> &nbsp;&bull;&nbsp; " + formatINR(mc.p90Inr10g) + " (P90 High)";
+    const treeEl = document.getElementById("scenarioTreeContainer"); treeEl.innerHTML = "";
+    const scenarios = normalizeScenarioWeights(data.scenarios, spotUsd, spotFx);
+    for (let i = 0; i < scenarios.length; i++) {
+      const sc = scenarios[i] || {}, scInr = computeLandedIndia24KPer10g(sc.target_usd_oz, sc.target_usd_inr, meta.dutyRate, DEFAULT_GST_RATE, meta.basisInr);
+      const item = document.createElement("div"); item.className = "scenario-item";
+      item.innerHTML = "<strong>" + (sc.name || "Scenario " + (i + 1)) + " (" + (Number(sc.prob_pct) || 0) + "%): " + formatINR(scInr) + " / 10g</strong> &mdash; " + formatUSD(sc.target_usd_oz, 0) + "/oz | USD/INR Rs." + (Number(sc.target_usd_inr) || "--") + "<div class='muted-note' style='color:#cbd5e1;margin-top:4px;'>" + (sc.drivers || "") + "</div>";
+      treeEl.appendChild(item);
+    }
+    document.getElementById("mcResultCard").style.display = "block";
+    document.getElementById("telemetryStamp").textContent = "Model: " + meta.usedModel + " | " + meta.istTimestamp;
+    document.getElementById("horizonBadge").textContent = meta.horizonDays + " Days (" + meta.todayStr + " to " + meta.targetDateStr + ")";
+  }
+  window.handleSaveKey = function () {
+    const val = (document.getElementById("apiKeyInput").value || "").trim();
+    if (!val) { localStorage.removeItem(STORAGE_KEY); setStatus("Cleared API key from localStorage."); logDiag("Removed API key from browser localStorage."); return; }
+    localStorage.setItem(STORAGE_KEY, val); setStatus("Saved API key in browser localStorage."); logDiag("Saved API key locally in browser localStorage.");
+  };
+  window.handleToggleMask = function () {
+    const inp = document.getElementById("apiKeyInput"), btn = document.getElementById("toggleMaskBtn");
+    if (inp && btn) { if (inp.type === "password") { inp.type = "text"; btn.textContent = "Hide"; } else { inp.type = "password"; btn.textContent = "Show"; } }
+  };
+  window.handleClearKey = function () { localStorage.removeItem(STORAGE_KEY); document.getElementById("apiKeyInput").value = ""; setStatus("API key cleared."); logDiag("Cleared API key field and localStorage."); };
+  window.clearDiagnostics = clearDiagnostics;
+  window.executeForecastPipeline = async function () {
+    hideError();
+    const btn = document.getElementById("runForecastBtn");
+    const apiKey = (document.getElementById("apiKeyInput").value || "").trim() || (localStorage.getItem(STORAGE_KEY) || "").trim();
+    const targetDateStr = (document.getElementById("targetDateInput").value || "").trim();
+    const pathCount = Number(document.getElementById("simPathsSelect").value) || 2000;
+    if (!apiKey) { showError("Please enter your Gemini API key in the vault box above and tap Save Key."); return; }
+    localStorage.setItem(STORAGE_KEY, apiKey);
+    if (!targetDateStr) { showError("Please select a valid target prediction date."); return; }
+    const now = new Date(), todayStr = now.toISOString().slice(0, 10), istTimestamp = now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " IST";
+    const horizonDays = Math.round((new Date(targetDateStr + "T00:00:00") - new Date(todayStr + "T00:00:00")) / 86400000);
+    if (!Number.isFinite(horizonDays) || horizonDays < 1 || horizonDays > 90) { showError("Target date must be between 1 and 90 days ahead of today (" + todayStr + ")."); return; }
+    btn.disabled = true; setStatus("Discovering available search-grounded Gemini models and fetching live market data..."); logDiag("Starting forecast pipeline for target date " + targetDateStr + " (" + horizonDays + " days)...");
+    try {
+      let discovered = [];
+      try { discovered = await discoverModels(apiKey); logDiag("Discovered " + discovered.length + " candidate generateContent models."); } catch (listErr) { logDiag("Model discovery warning: " + (listErr.message || String(listErr))); }
+      const queue = [], merged = PREFERRED_SEARCH_MODELS.concat(discovered);
+      for (let i = 0; i < merged.length; i++) { const id = merged[i]; if (id && isCandidateSearchModel(id) && queue.indexOf(id) === -1) queue.push(id); }
+      const promptText = buildMarketPrompt(todayStr, istTimestamp, targetDateStr, horizonDays);
+      let marketData = null, usedModel = ""; const failures = [];
+      for (let i = 0; i < queue.length; i++) {
+        const modelId = queue[i];
+        try { setStatus("Querying live web & institutional data via " + modelId + "..."); logDiag("Attempt " + (i + 1) + "/" + queue.length + " using model '" + modelId + "'..."); marketData = await invokeGroundedModel(apiKey, modelId, promptText); usedModel = modelId; logDiag("Succeeded with model '" + modelId + "'."); break; }
+        catch (modelErr) { const msg = modelErr && modelErr.message ? modelErr.message : String(modelErr); failures.push(msg); logDiag("Failed on '" + modelId + "': " + msg.slice(0, 220)); const code = modelErr && modelErr.status; if (code === 401 || code === 403 || code === 429) throw modelErr; }
+      }
+      if (!marketData) throw new Error("All candidate models failed:\n" + failures.join("\n"));
+      logDiag(classifyMacroRegime(marketData));
+      const spotUsd = Number(marketData.spot_usd_oz), spotFx = Number(marketData.spot_usd_inr);
+      const dutyRate = Number.isFinite(Number(marketData.india_duty_decimal)) ? Number(marketData.india_duty_decimal) : 0.06;
+      const basisInr = Number.isFinite(Number(marketData.mcx_comex_basis_inr)) ? Number(marketData.mcx_comex_basis_inr) : 1000;
+      const parityToday = computeLandedIndia24KPer10g(spotUsd, spotFx, dutyRate, DEFAULT_GST_RATE, basisInr);
+      const todayInr = Number(marketData.today_india_24k_10g) > 0 ? Number(marketData.today_india_24k_10g) : parityToday;
+      logDiag("Running " + pathCount + "-path correlated Monte Carlo parity engine...");
+      const mcResult = runCorrelatedMonteCarloEngine({ spotUsd: spotUsd, spotFx: spotFx, todayInr: todayInr, horizonDays: horizonDays, dutyRate: dutyRate, gstRate: DEFAULT_GST_RATE, basisInr: basisInr, pathCount: pathCount, scenarios: marketData.scenarios, annualGoldVol: marketData.annual_gold_vol, annualFxVol: marketData.annual_fx_vol, goldFxCorr: marketData.gold_fx_corr });
+      renderDashboard(marketData, mcResult, { todayStr: todayStr, istTimestamp: istTimestamp, targetDateStr: targetDateStr, horizonDays: horizonDays, dutyRate: dutyRate, basisInr: basisInr, todayInr: todayInr, usedModel: usedModel });
+      setStatus("Live web grounding + " + pathCount.toLocaleString("en-US") + "-path Monte Carlo forecast completed via " + usedModel + "."); logDiag("Forecast rendered successfully.");
+    } catch (err) { const errMsg = err && err.message ? err.message : String(err); showError(errMsg); setStatus("Forecast failed."); logDiag("ERROR: " + errMsg); }
+    finally { btn.disabled = false; }
+  };
+  window.addEventListener("DOMContentLoaded", function () {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) { document.getElementById("apiKeyInput").value = saved; setStatus("Loaded saved Gemini API key from browser storage."); logDiag("Restored Gemini API key from browser localStorage."); }
+  });
+})();
+</script>
+</body>
+</html>
